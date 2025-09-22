@@ -78,7 +78,7 @@ class AudioManager:
         noise_part[:len(tone_part)] += tone_part * 0.5
 
         # Reduce the final amplitude to lower the snare's volume
-        noise_part *= 0.6
+        noise_part *= 0.5
 
         return self._to_pygame_sound(noise_part)
 
@@ -93,3 +93,11 @@ class AudioManager:
             self.sounds[sound_name].play()
         else:
             print(f"Attempted to play a sound that is not loaded: {sound_name}")
+
+    def set_global_volume(self, volume):
+        """Sets the volume for all sounds.
+        Args:
+            volume (float): A value from 0.0 (silent) to 1.0 (full).
+        """
+        for sound in self.sounds.values():
+            sound.set_volume(volume)

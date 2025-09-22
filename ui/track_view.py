@@ -42,7 +42,7 @@ class Track(ctk.CTkFrame):
             self.steps[step_index].configure(fg_color="gray")
 
     def clear_pattern(self):
-        """Resets the track's pattern to all zeros and updates the UI."""
+        """Resets the track's pattern to all zeros and updates the UI.""" 
         for i in range(len(self.pattern)):
             self.pattern[i] = 0
         
@@ -56,8 +56,9 @@ class TrackView(ctk.CTkFrame):
         self.sequencer = sequencer
 
         # Add tracks, passing the sequencer to them
+        # Increased top padding for the kick_track to be 2x the padding between tracks
         self.kick_track = Track(self, sound_name="Kick", sequencer=self.sequencer)
-        self.kick_track.pack(pady=5)
+        self.kick_track.pack(pady=(20, 5))
 
         self.snare_track = Track(self, sound_name="Snare", sequencer=self.sequencer)
         self.snare_track.pack(pady=5)

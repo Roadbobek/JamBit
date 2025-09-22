@@ -9,6 +9,7 @@ class Sequencer:
         self.current_step = 0
         self.steps_per_beat = 4  # 16th notes
         self.total_steps = 16
+        self.volume = 0.5 # Initialize global volume
 
         # This holds the pattern data, e.g., {"Kick": [1,0,0,0,...]}
         self.patterns = {}
@@ -48,6 +49,16 @@ class Sequencer:
         print("Sequencer: Stop")
 
     def set_bpm(self, bpm):
-        """Sets the tempo in beats per minute."""
-        self.bpm = max(30, min(300, bpm)) # Clamp BPM to a reasonable range
-        print(f"Sequencer: BPM set to {self.bpm}")
+        """Sets the tempo in beats per minute, handling potential errors."""
+        try:
+            bpm_val = int(float(bpm)) # Allow float strings like "120.0"
+            self.bpm = max(30, min(300, bpm_val)) # Clamp BPM
+            print(f"Sequencer: BPM set to {self.bpm}")
+        except (ValueError, TypeError):
+            print(f"Invalid BPM value received: {bpm}")
+
+    def set_volume(self, volume):
+        """Passes the volume command to the audio manager and stores it."""
+        self.volume = max(0.0, min(1.0, float(volume))) # Ensure volume is between 0.0 and 1.0
+        self.audio_manager.set_global_volume(self.volume)
+        print(f"Sequencer: Volume set to {self.volume:.2f}")
