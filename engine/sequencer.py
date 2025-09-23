@@ -9,7 +9,8 @@ class Sequencer:
         self.current_step = 0
         self.steps_per_beat = 4  # 16th notes
         self.total_steps = 16
-        self.volume = 0.5 # Initialize global volume
+        self.volume = 0.5 # Start at 50% volume
+        self.step_change_listeners = [] # A list of functions to call on step change
 
         # This holds the pattern data, e.g., {"Kick": [1,0,0,0,...]}
         self.patterns = {}
@@ -17,6 +18,10 @@ class Sequencer:
         # Run the sequencer loop in a separate thread
         self.thread = threading.Thread(target=self._sequencer_loop, daemon=True)
         self.thread.start()
+
+    def add_step_change_listener(self, listener_func):
+        """Adds a function to be called every time the step changes."""
+        self.step_change_listeners.append(listener_func)
 
     def _sequencer_loop(self):
         """The main loop that drives the sequencer forward in time."""
@@ -26,6 +31,10 @@ class Sequencer:
                 for sound_name, pattern in self.patterns.items():
                     if pattern[self.current_step] == 1:
                         self.audio_manager.play_sound(sound_name)
+
+                # --- Announce the new step to all listeners ---
+                for listener in self.step_change_listeners:
+                    listener(self.current_step)
 
                 # --- Advance to the next step ---
                 self.current_step = (self.current_step + 1) % self.total_steps
@@ -46,6 +55,9 @@ class Sequencer:
     def stop(self):
         """Stops the sequencer playback."""
         self.is_playing = False
+        # When stopping, tell listeners to clear the highlight
+        for listener in self.step_change_listeners:
+            listener(-1) # Use -1 to indicate "no step"
         print("Sequencer: Stop")
 
     def set_bpm(self, bpm):

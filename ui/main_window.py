@@ -13,20 +13,15 @@ class MainWindow(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
         # --- Create and place the widgets ---
-        # Control Panel
-        # pady=(top, bottom). Top is 10, bottom is 5.
         self.control_panel = ControlPanel(self, sequencer=self.sequencer)
         self.control_panel.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="ew")
 
-        # Track View
-        # pady=(top, bottom). Top is 5, bottom is 5.
-        # Space between ControlPanel and TrackView is now (5 + 5) = 10px.
-        # This is now the same as the space between ControlPanel and top of window (10px).
         self.track_view = TrackView(self, sequencer=self.sequencer)
-        self.track_view.grid(row=1, column=0, padx=10, pady=(5, 5), sticky="nsew")
+        self.track_view.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="nsew")
 
-        # Footer
-        # pady=(top, bottom). Reduced bottom padding to 5.
-        self.footer = ctk.CTkLabel(self, text="JamBit v1.1.0  |  © 2025 Roadbobek  <3",
+        self.footer = ctk.CTkLabel(self, text="JamBit v1.2.0  |  © 2025 Roadbobek  <3",
                                    font=ctk.CTkFont(size=12))
         self.footer.grid(row=2, column=0, padx=10, pady=(0, 5), sticky="ew")
+
+        # --- Connect Engine to UI for Highlighting ---
+        self.sequencer.add_step_change_listener(self.track_view.update_highlights)
